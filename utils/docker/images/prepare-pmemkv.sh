@@ -31,7 +31,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# install-pmemkv.sh <package_type> - install pmemkv packages
+# prepare-pmemkv.sh <package_type> - prepare pmemkv packages
 #
 
 set -e
@@ -40,18 +40,30 @@ package_type=$1
 
 # stable_pmemkv_version="0.8"
 
-# commit: Merge pull request #405 from ldorau/Install-pmreorder-in-Docker-images; 23.08.2019
-current_pmemkv_version="19fadbf50e93e9c6c234b1a6a520452424c46272"
+# commit: Merge pull request #456 from karczex/multithreaded_cmap_test; 01.10.2019
+current_pmemkv_version="70b4a1272dc0e0be1ed716ff8797092396295759"
+
+prepare_pmemkv () {
+	pmemkv_version="$1"
+	version_name="$2"
+	git checkout "$pmemkv_version"
+	mkdir build
+	cd build
+	cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_INSTALL_PREFIX=$PREFIX \
+		-DCPACK_GENERATOR=$package_type
+	make package
+	cd ..
+	mkdir /opt/"$version_name"
+	mv build/* /opt/"$version_name"
+	rm -rf build
+}
 
 git clone https://github.com/pmem/pmemkv
 cd pmemkv
-git checkout "$current_pmemkv_version"
 
-mkdir build
-cd build
-cmake ..
-make --prefix=$PREFIX
-sudo make install
+# prepare_pmemkv "$stable_pmemkv_version" "pmemkv-stable"
+prepare_pmemkv "$current_pmemkv_version" "pmemkv-master"
 
-cd ../..
+cd ..
 rm -r pmemkv

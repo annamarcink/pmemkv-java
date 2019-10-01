@@ -82,9 +82,9 @@ RUN ./install-pmdk.sh dpkg
 COPY install-libpmemobj-cpp.sh install-libpmemobj-cpp.sh
 RUN ./install-libpmemobj-cpp.sh DEB
 
-# Install pmemkv
-COPY install-pmemkv.sh install-pmemkv.sh
-RUN ./install-pmemkv.sh DEB
+# Prepare pmemkv
+COPY prepare-pmemkv.sh prepare-pmemkv.sh
+RUN ./prepare-pmemkv.sh DEB
 
 # Install jni library
 COPY install-jni.sh install-jni.sh

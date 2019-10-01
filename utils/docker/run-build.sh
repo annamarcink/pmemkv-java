@@ -39,6 +39,16 @@ PREFIX=/usr
 
 set -e
 
+# build and install pmemkv
+pmemkv_version=$1
+cd /opt/pmemkv-$pmemkv_version/
+
+if [ "${OS}" = "ubuntu" ]; then
+	echo $USERPASS | sudo -S dpkg -i libpmemkv*.deb
+elif [ "${OS}" = "fedora" ]; then
+	echo $USERPASS | sudo -S rpm -i libpmemkv*.rpm
+fi
+
 echo
 echo "########################################################"
 echo "### Verifying building, installation and tests execution"
